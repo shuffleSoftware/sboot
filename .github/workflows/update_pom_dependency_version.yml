@@ -45,30 +45,20 @@ jobs:
         cmd: yq --input-format json --output-format xml new.json > ./complete/pom.xml
 
     - name: Create Pull Request
-      #id: cpr
-      #uses: peter-evans/create-pull-request@v5
-      #with:
-      #  token: ${{ secrets.PAT }}
-      #  commit-message: Update POM dependency version
-      #  committer: GitHub <noreply@github.com>
-      #  author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-      #  signoff: false
-      #  branch: main
-      #  delete-branch: false
-      #  title: '[Automated] Changes to POM.XML'
-      #  body: |
-      #    Update report
-      #    - artifactId: ${{ inputs.artifactId }}
-      #    - artifactVersion: ${{ inputs.desiredArtifactIdVersion }}
-      #  labels: |
-      #    automated pr
-    - uses: peter-evans/create-pull-request@v5
-    - name: Create commits
-      run: |
-        git config user.name 'Doe'
-        git config user.email 'me@mail.com'
-        git add ./complete/pom.xml
-        git commit -m "[automated] update pom.xml"
-    - name: Create Pull Request
+      id: cpr
       uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.PAT }}
+        commit-message: Update POM dependency version
+        committer: GitHub <noreply@github.com>
+        author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        branch: main
+        delete-branch: false
+        title: '[Automated] Changes to POM.XML'
+        body: |
+          Update report
+          - artifactId: ${{ inputs.artifactId }}
+          - artifactVersion: ${{ inputs.desiredArtifactIdVersion }}
+        labels: |
+          automated pr
 
