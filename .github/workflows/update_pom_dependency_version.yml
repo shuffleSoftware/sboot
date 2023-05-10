@@ -57,7 +57,7 @@ jobs:
       uses: sergeysova/jq-action@v2
       id: currentVersion
       with:
-        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"1.2.3\"" pom.json'
+        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"1.2.3\"" ./complete/file.json'
     - name: Show index
       run: 'echo "version ${{ steps.index.outputs.value }}" && echo currentVersion = ${{ steps.currentVersion.outputs.value }}'
     #- name: Create Pull Request
