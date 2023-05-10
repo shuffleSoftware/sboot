@@ -43,7 +43,10 @@ jobs:
       uses: mikefarah/yq@master
       with:
         cmd: yq --input-format json --output-format xml new.json > ./complete/pom.xml
-
+    - name: delete unnecesary files
+      run: rm new.json
+      shell: bash
+      
     - name: Create Pull Request
       id: cpr
       uses: peter-evans/create-pull-request@v5
