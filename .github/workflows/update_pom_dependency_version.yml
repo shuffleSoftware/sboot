@@ -15,15 +15,19 @@ on:
     branches: [ "develop" ]
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
+      artifactId:
+        description: 'artifactId to update'
+      desiredArtifactIdVersion:
+        description: 'version to be updated to'
+      #logLevel:
+      #  description: 'Log level'
+      #  required: true
+      #  default: 'warning'
+      #  type: choice
+      #  options:
+      #  - info
+      #  - warning
+      #  - debug
       #tags:
       #  description: 'Test scenario tags'
       #  required: false
@@ -42,10 +46,14 @@ jobs:
     - uses: actions/checkout@v3
     
     # Make changes to pull request here
-    - name: install_binaries
-      run: apt install yq -y
-      shell: bash
-      
+    - name: Get index artifactId
+      uses: sergeysova/jq-action@v2
+      id: version
+      with:
+        #cmd: 'jq .version package.json -r'
+        cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" pom.json'
+    - name: Show index
+      run: 'echo "version ${{ steps.version.outputs.value }}"'
     #- name: Create Pull Request
     #  uses: peter-evans/create-pull-request@v5
 
