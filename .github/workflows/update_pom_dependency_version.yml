@@ -59,10 +59,17 @@ jobs:
       uses: sergeysova/jq-action@v2
       id: currentVersion
       with:
-        #cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"1.2.3\"" ./complete/file.json'
         cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version" ./complete/file.json'
-    - name: Show index
-      run: 'echo "version ${{ steps.index.outputs.value }}" && echo currentVersion = ${{ steps.currentVersion.outputs.value }}'
+    - name: Update version
+      if: ${{ steps.currentVersion.outputs.value }} == null
+      id: updateVersion
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: 'jq -r ".project.dependencies.dependency[$ind].version |= \"1.2.3\"" ./complete/file.json'
+    # todo: below one depends on Update version
+    - name: Display changes
+      run: 'echo ${{ steps.updateVersion.outputs.value }}'
+      #run: 'echo "version ${{ steps.index.outputs.value }}" && echo currentVersion = ${{ steps.currentVersion.outputs.value }}'
     #- name: Create Pull Request
     #  uses: peter-evans/create-pull-request@v5
 
