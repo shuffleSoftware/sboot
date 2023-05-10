@@ -70,8 +70,8 @@ jobs:
     - name: Update POM
       uses: mikefarah/yq@master
       with:
-        cmd: yq --input-format json --output-format xml new.json
-      #run: 'echo "version ${{ steps.index.outputs.value }}" && echo currentVersion = ${{ steps.currentVersion.outputs.value }}'
-    #- name: Create Pull Request
-    #  uses: peter-evans/create-pull-request@v5
+        cmd: yq --input-format json --output-format xml new.json > ./complete/pom.xml
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
 
