@@ -61,11 +61,11 @@ jobs:
       with:
         cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version" ./complete/file.json'
     - name: Update version
-      if: ${{ steps.currentVersion.outputs.value }} == null
+      if: ${{ steps.currentVersion.outputs.value }} != ${{ inputs.desiredArtifactIdVersion }}
       id: updateVersion
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'jq -r ".project.dependencies.dependency[$ind].version |= \"1.2.3\"" ./complete/file.json'
+        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ input.desiredArtifactIdVersion }}\"" ./complete/file.json'
     # todo: below one depends on Update version
     - name: Display changes
       run: 'echo ${{ steps.updateVersion.outputs.value }}'
