@@ -51,7 +51,7 @@ jobs:
       id: version
       with:
         #cmd: 'jq .version package.json -r'
-        cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" pom.json'
+        cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" ./complete/pom.json'
     - name: Show index
       run: 'echo "version ${{ steps.version.outputs.value }}"'
     #- name: Create Pull Request
