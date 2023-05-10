@@ -17,8 +17,10 @@ on:
     inputs:
       artifactId:
         description: 'artifactId to update'
+        default: 'spring-boot-starter-test'
       desiredArtifactIdVersion:
         description: 'version to be updated to'
+        default: '1.2.3'
       #logLevel:
       #  description: 'Log level'
       #  required: true
