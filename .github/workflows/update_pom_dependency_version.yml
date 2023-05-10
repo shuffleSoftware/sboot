@@ -65,7 +65,7 @@ jobs:
       id: updateVersion
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ input.desiredArtifactIdVersion }}\"" ./complete/file.json'
+        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" ./complete/file.json'
     # todo: below one depends on Update version
     - name: Display changes
       run: 'echo ${{ steps.updateVersion.outputs.value }}'
