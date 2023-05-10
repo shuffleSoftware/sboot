@@ -48,12 +48,18 @@ jobs:
     # Make changes to pull request here
     - name: Get index artifactId
       uses: sergeysova/jq-action@v2
-      id: version
+      id: index
       with:
         #cmd: 'jq .version package.json -r'
         cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" ./complete/file.json'
+   
+    - name: Compare currentVersion vs desiredVersion
+      uses: sergeysova/jq-action@v2
+      id: currentVersion
+      with:
+        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"1.2.3\"" pom.json'
     - name: Show index
-      run: 'echo "version ${{ steps.version.outputs.value }}"'
+      run: 'echo "version ${{ steps.index.outputs.value }}" && echo currentVersion = ${{ steps.currentVersion.outputs.value }}'
     #- name: Create Pull Request
     #  uses: peter-evans/create-pull-request@v5
 
