@@ -54,6 +54,7 @@ jobs:
       with:
         #cmd: 'jq .version package.json -r'
         cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" ./complete/file.json'
+        multiline: true
    
     - name: Compare currentVersion vs desiredVersion
       uses: sergeysova/jq-action@v2
