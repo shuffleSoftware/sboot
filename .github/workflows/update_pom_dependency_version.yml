@@ -66,10 +66,11 @@ jobs:
       id: updateVersion
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" ./complete/file.json'
+        cmd: 'echo $(jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" ./complete/file.json) new.json'
     # todo: below one depends on Update version
     - name: Display changes
-      run: 'echo ${{ steps.updateVersion.outputs.value }}'
+      #run: 'echo ${{ steps.updateVersion.outputs.value }}'
+      run: ls
       #run: 'echo "version ${{ steps.index.outputs.value }}" && echo currentVersion = ${{ steps.currentVersion.outputs.value }}'
     #- name: Create Pull Request
     #  uses: peter-evans/create-pull-request@v5
