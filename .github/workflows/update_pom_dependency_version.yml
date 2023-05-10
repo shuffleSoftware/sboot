@@ -92,8 +92,8 @@ jobs:
           [1]: https://github.com/peter-evans/create-pull-request
         labels: |
           automated pr
-        assignees: daniel-lopez
-        reviewers: daniel-lopez
+        #assignees: daniel-lopez
+        #reviewers: daniel-lopez
         #team-reviewers: |
         #  developers
         #  qa-team
