@@ -92,7 +92,7 @@ jobs:
   success:
     needs: build
     name: MS Teams Notification
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - name: ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}
