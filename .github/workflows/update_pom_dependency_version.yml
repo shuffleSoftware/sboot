@@ -52,7 +52,7 @@ jobs:
       id: updateVersion
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'echo $(jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" ./complete/tmp.json) > ./completed/tmp.json'
+        cmd: 'echo $(jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" ./complete/tmp.json) > ./complete/tmp.json'
    
    # Step 5: Update POM.XML
     - name: Update POM
@@ -63,7 +63,7 @@ jobs:
         cmd: yq --input-format json --output-format xml tmp.json > ./complete/pom.xml
         
     - name: delete unnecesary files
-      run: rm ./completed/tmp.json
+      run: rm ./complete/tmp.json
       shell: bash
       
     #  Step 5.1: Create pull request
