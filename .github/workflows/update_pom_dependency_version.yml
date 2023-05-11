@@ -25,7 +25,7 @@ jobs:
     - name: tmp json of pom.xml
       uses: mikefarah/yq@master
       with:
-        cmd: yq --input-format xml --output-format json pom.xml > ./complete/tmp.json
+        cmd: yq --input-format xml --output-format json ./complete/pom.xml > ./complete/tmp.json
     
     - name: value of tmp.json
       run: cat ./complete/tmp.json
