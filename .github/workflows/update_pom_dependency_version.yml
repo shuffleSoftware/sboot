@@ -18,7 +18,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    outputs:
+      PR_URL: ${{ steps.prurl.outputs.PR_URL }}
+      CURRENT_VERSION: ${{ steps.currentVersionExport.outputs.CURRENT_VERSION }}
     steps:
     - uses: actions/checkout@v3
     
@@ -66,6 +68,8 @@ jobs:
     - name: delete unnecesary files
       run: rm $TMP_FILE
       shell: bash
+    
+    
       
     #  Step 5.1: Create pull request
     - name: Create Pull Request
@@ -88,6 +92,14 @@ jobs:
           automated pr
      #  Step 5.2: Notify via <teams,slack>
     - uses: actions/checkout@master
+    
+    - name: export pullrquest_url
+      id: prurl
+      run: echo "PR_URL=${{ steps.cpr.outputs.pull-request-url }}" >> $GITHUB_OUTPUT
+    - name: export currentVersion # for given artifact
+      id: currentVersionExport
+      run: echo "CURRENT_VERSION=${{ steps.currentVersion.outputs.value }}"
+      
   success:
     name: MS Teams Notification
     needs: build
@@ -99,9 +111,46 @@ jobs:
         # if: always()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
+          raw: >-
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "correlationId": "04edc93447dd9ec5ecdecfe20cb6414e40584a82",
+              "themeColor": "#2cbe4e",
+              "title": "${{ inputs.artifactId }} | ${{ needs.build.outputs.PR_URL }} -> ${{ inputs.desiredVersion }}",
+              "summary": "[shuffleSoftware/sboot](https://github.com/shuffleSoftware/sboot)",
+              "sections": [
+                {
+                  "facts": [
+                    {
+                      "name": "✓ build",
+                      "value": "Success!"
+                    }
+                  ],
+                  "startGroup": true
+                },
+                {
+                  "activityTitle": "Success!",
+                  "activitySubtitle": "",
+                  "activityImage": "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/success.png"
+                }
+              ],
+              "potentialAction": [
+                {
+                  "@type": "OpenUri",
+                  "name": "Pull Request",
+                  "targets": [
+                    {
+                      "os": "default",
+                      "uri": "${{ needs.build.outputs.PR_URL }}"
+                    }
+                  ]
+                }
+              ]
+            }
+          #needs: ${{ toJson(needs) }}
+          #job: ${{ toJson(job) }}
+          #steps: ${{ toJson(steps) }}
           #dry_run: True
   #success:
   #  needs: build
