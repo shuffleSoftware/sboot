@@ -94,10 +94,5 @@ jobs:
       if: ${{ steps.cpr }}
       with:
         webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-        raw: >-
-          {
-            "@type": "MessageCard",
-            "@context": "http://schema.org/extensions",
-            "title": "Version update"
-          }
+        overwrite: "{title: `Overwrote title in ${workflow_link}`}"
       
