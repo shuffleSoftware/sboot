@@ -95,8 +95,8 @@ jobs:
         labels: |
           automated pr
      #  Step 5.2: Notify via <teams,slack>
+     
     - uses: actions/checkout@master
-    
     - name: export PR url
       run: echo "PULL_REQUEST_URL=${{ steps.cpr.outputs.pull-request-url }}" >> "$GITHUB_OUTPUT"
       
@@ -133,7 +133,7 @@ jobs:
                   { os: "default", uri: compare }
                 ]
               }
-            ]
+             ]
             }"
           #job: ${{ toJson(job) }}
           #raw: >-
