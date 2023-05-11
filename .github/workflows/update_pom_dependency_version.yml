@@ -88,6 +88,21 @@ jobs:
           automated pr
      #  Step 5.2: Notify via <teams,slack>
     - uses: actions/checkout@master
+  success:
+    name: MS Teams Notification
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        # if: always()
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}
+          dry_run: True
   #success:
   #  needs: build
   #  name: MS Teams Notification
