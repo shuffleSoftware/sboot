@@ -90,18 +90,19 @@ jobs:
      #  Step 5.2: Notify via <teams,slack>
     - uses: actions/checkout@master
   success:
-    name: ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}
     needs: build
+    name: MS Teams Notification
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
       - name: ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}
-        #if: always()
+        uses: skitionek/notify-microsoft-teams@master
+        # if: always()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
           needs: ${{ toJson(needs) }}
           job: ${{ toJson(job) }}
           steps: ${{ toJson(steps) }}
-          dry_run: ${{ !github.event.action == 'release' }}
+          dry_run: True
           
       
