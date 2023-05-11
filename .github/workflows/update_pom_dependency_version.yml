@@ -26,6 +26,10 @@ jobs:
       uses: mikefarah/yq@master
       with:
         cmd: yq --input-format xml --output-format json pom.xml > ./complete/tmp.json
+    
+    - name: value of tmp.json
+      run: cat ./complete/tmp.json
+      shell: bash
      
     # Step 2: Get indexOf of artifactId
     - name: Get index artifactId
