@@ -101,7 +101,7 @@ jobs:
       run: echo "PR_URL=${{ steps.cpr.outputs.pull-request-url }}" >> $GITHUB_OUTPUT
     - name: export currentVersion # for given artifact
       id: currentVersionExport
-      run: echo "CURRENT_VERSION=${{ steps.currentVersion.outputs.value }}"
+      run: echo "CURRENT_VERSION=${{ steps.currentVersion.outputs.value }}" >> $GITHUB_OUTPUT
       
   success:
     name: MS Teams Notification
