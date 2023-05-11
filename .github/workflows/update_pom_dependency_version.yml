@@ -19,7 +19,7 @@ jobs:
   build:
     outputs:
       currentArtifactVersion: ${{ steps.currentVersion.outputs.CURRENT_ARTIFACT_VERSION }}
-      pullRequestUrl: ${{ steps.cpr.outputs.PULL_REQUEST_URL }}
+      #pullRequestUrl: ${{ steps.cpr.outputs.PULL_REQUEST_URL }}
 
     runs-on: ubuntu-latest
 
@@ -94,11 +94,11 @@ jobs:
           - artifactVersion: ${{ inputs.desiredArtifactIdVersion }}
         labels: |
           automated pr
-     #  Step 5.2: Notify via <teams,slack>
-     
+     #  Step 5.2: Notify via <teams,slack> 
     - uses: actions/checkout@master
-    - name: export PR url
-      run: echo "PULL_REQUEST_URL=${{ steps.cpr.outputs.pull-request-url }}" >> "$GITHUB_OUTPUT"
+    
+    #- name: export PR url
+    #  run: echo "PULL_REQUEST_URL=${{ steps.cpr.outputs.pull-request-url }}" >> "$GITHUB_OUTPUT"
       
   success:
     needs: build
