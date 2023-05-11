@@ -19,7 +19,7 @@ jobs:
   build:
     outputs:
       currentArtifactVersion: ${{ steps.currentVersion.outputs.CURRENT_ARTIFACT_VERSION }}
-      pullRequestUrl: ${{ steps.cpr.outputs.pull-request-url }}
+      pullRequestUrl: ${{ steps.cpr.outputs.PULL_REQUEST_URL }}
 
     runs-on: ubuntu-latest
 
