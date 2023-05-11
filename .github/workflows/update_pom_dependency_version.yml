@@ -12,7 +12,9 @@ on:
       desiredArtifactIdVersion:
         description: 'version to be updated to'
         default: '1.2.3'
-
+env:
+  POM_FILE: "./complete/pom.xml"
+  TMP_FILE: "./complete/tmp.json"
 jobs:
   build:
 
@@ -25,18 +27,18 @@ jobs:
     - name: tmp json of pom.xml
       uses: mikefarah/yq@master
       with:
-        cmd: yq --input-format xml --output-format json ./complete/pom.xml > ./complete/tmp.json
+        cmd: yq --input-format xml --output-format json $POM_FILE > $TMP_FILE
     
-    - name: value of tmp.json
-      run: cat ./complete/tmp.json
-      shell: bash
+    #- name: value of tmp.json
+    #  run: cat $TMP_FILE
+    #  shell: bash
      
     # Step 2: Get indexOf of artifactId
     - name: Get index artifactId
       uses: sergeysova/jq-action@v2
       id: index
       with:
-        cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" ./complete/tmp.json'
+        cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" $TMP_FILE'
         multiline: true
         
     # Step 3: Get current version of artifactId
@@ -44,7 +46,7 @@ jobs:
       uses: sergeysova/jq-action@v2
       id: currentVersion
       with:
-        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version" ./complete/tmp.json'
+        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version" $TMP_FILE'
         
     # Step 4: Update version if desiredVersion != currentVersion and store it in tmp.json
     - name: Update version in tmp
@@ -52,7 +54,7 @@ jobs:
       id: updateVersion
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'echo $(jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" ./complete/tmp.json) > ./complete/tmp.json'
+        cmd: 'echo $(jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" $TMP_FILE) > $TMP_FILE'
    
    # Step 5: Update POM.XML
     - name: Update POM
@@ -60,10 +62,10 @@ jobs:
       if: ${{ steps.updateVersion }}
       uses: mikefarah/yq@master
       with:
-        cmd: yq --input-format json --output-format xml tmp.json > ./complete/pom.xml
+        cmd: yq --input-format json --output-format xml $TMP_FILE > $POM_FILE
         
     - name: delete unnecesary files
-      run: rm ./complete/tmp.json
+      run: rm $TMP_FILE
       shell: bash
       
     #  Step 5.1: Create pull request
@@ -78,7 +80,7 @@ jobs:
         author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
         branch: main
         delete-branch: false
-        title: '[Automated] Changes to POM.XML'
+        title: '[Automated] ${{ inputs.artifactId }} from ${{ steps.currentVersion.outputs.value }} to ${{ inputs.desiredArtifactIdVersion }}'
         body: |
           Update report
           - artifactId: ${{ inputs.artifactId }}
