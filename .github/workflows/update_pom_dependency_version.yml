@@ -88,7 +88,16 @@ jobs:
         labels: |
           automated pr
      #  Step 5.2: Notify via <teams,slack>
-    #- name: Notify
-    #  id: notify
-    #  if: ${{ steps.cpr }}
+    - uses: actions/checkout@master
+    - name: Microsoft Teams Notification
+      uses: skitionek/notify-microsoft-teams@master
+      if: ${{ steps.cpr }}
+      with:
+        webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+        raw: >-
+          {
+            "@type": "MessageCard",
+            "@context": "http://schema.org/extensions",
+            "title": "Version update"
+          }
       
