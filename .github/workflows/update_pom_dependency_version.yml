@@ -80,7 +80,7 @@ jobs:
         author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
         branch: main
         delete-branch: false
-        title: '[Automated] ${{ inputs.artifactId }} from ${{ steps.currentVersion.outputs.value }} to ${{ inputs.desiredArtifactIdVersion }}'
+        title: '[Automated] ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}'
         body: |
           Update report
           - artifactId: ${{ inputs.artifactId }}
@@ -89,15 +89,19 @@ jobs:
           automated pr
      #  Step 5.2: Notify via <teams,slack>
     - uses: actions/checkout@master
-    - name: Microsoft Teams Notification
-      uses: skitionek/notify-microsoft-teams@master
-      if: ${{ steps.cpr }}
-      with:
-        webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-        raw: >-
-            {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "title": "{title: `${{ inputs.artifactId }} ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }} `}"
-            }
+  success:
+    name: ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}
+    needs: build
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+      - name: ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}
+        #if: always()
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}
+          dry_run: ${{ !github.event.action == 'release' }}
+          
       
