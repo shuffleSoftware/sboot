@@ -117,23 +117,23 @@ jobs:
               "@context": "http://schema.org/extensions",
               "correlationId": "04edc93447dd9ec5ecdecfe20cb6414e40584a82",
               "themeColor": "#2cbe4e",
-              "title": "${{ inputs.artifactId }} | ${{ needs.build.outputs.PR_URL }} -> ${{ inputs.desiredVersion }}",
+              "title": "${{ inputs.artifactId }} | ${{ needs.build.outputs.CURRENT_VERSION }} -> ${{ inputs.desiredVersion }}",
               "summary": "[shuffleSoftware/sboot](https://github.com/shuffleSoftware/sboot)",
               "sections": [
-                {
-                  "facts": [
-                    {
-                      "name": "✓ build",
-                      "value": "Success!"
-                    }
-                  ],
-                  "startGroup": true
-                },
-                {
-                  "activityTitle": "Success!",
-                  "activitySubtitle": "",
-                  "activityImage": "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/success.png"
-                }
+              #  {
+              #    "facts": [
+              #      {
+              #        "name": "✓ build",
+              #        "value": "Success!"
+              #      }
+              #    ],
+              #    "startGroup": true
+              #  },
+              #  {
+              #    "activityTitle": "Success!",
+              #    "activitySubtitle": "",
+              #    "activityImage": "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/success.png"
+              #  }
               ],
               "potentialAction": [
                 {
