@@ -118,26 +118,9 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              #"correlationId": "04edc93447dd9ec5ecdecfe20cb6414e40584a82",
-              "themeColor": "#2cbe4e",
               "title": "${{ inputs.artifactId }} | ${{ needs.build.outputs.CURRENT_VERSION }} -> ${{ inputs.desiredArtifactIdVersion }}",
               "summary": "[shuffleSoftware/sboot](https://github.com/shuffleSoftware/sboot)",
-              "sections": [
-              #  {
-              #    "facts": [
-              #      {
-              #        "name": "✓ build",
-              #        "value": "Success!"
-              #      }
-              #    ],
-              #    "startGroup": true
-              #  },
-              #  {
-              #    "activityTitle": "Success!",
-              #    "activitySubtitle": "",
-              #    "activityImage": "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/success.png"
-              #  }
-              ],
+              "sections": [],
               "potentialAction": [
                 {
                   "@type": "OpenUri",
@@ -151,19 +134,5 @@ jobs:
                 }
               ]
             }
-          #needs: ${{ toJson(needs) }}
-          #job: ${{ toJson(job) }}
-          #steps: ${{ toJson(steps) }}
           dry_run: ${{ inputs.notificationDryRun }}
-  #success:
-  #  needs: build
-  #  name: MS Teams Notification
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - uses: actions/checkout@master
-  #    - name: ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}
-  #      uses: skitionek/notify-microsoft-teams@master
-  #      # if: always()
-  #      with:
-  #        webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
 
