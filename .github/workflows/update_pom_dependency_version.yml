@@ -20,34 +20,51 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
+    
+    # Step 1: Create JSON version of POM.XML to work with jq
+    - name: tmp json of pom.xml
+      uses: mikefarah/yq@master
+      with:
+        cmd: yq --input-format xml --output-format json pom.xml > ./complete/tmp.json
+     
+    # Step 2: Get indexOf of artifactId
     - name: Get index artifactId
       uses: sergeysova/jq-action@v2
       id: index
       with:
-        cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" ./complete/file.json'
+        cmd: 'jq -r ".project.dependencies.dependency | .[map(select(.artifactId == \"${{ inputs.artifactId }}\"))][0]" ./complete/tmp.json'
         multiline: true
-   
-    - name: Compare currentVersion vs desiredVersion
+        
+    # Step 3: Get current version of artifactId
+    - name: Get current version
       uses: sergeysova/jq-action@v2
       id: currentVersion
       with:
-        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version" ./complete/file.json'
-    - name: Update version
+        cmd: 'jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version" ./complete/tmp.json'
+        
+    # Step 4: Update version if desiredVersion != currentVersion and store it in tmp.json
+    - name: Update version in tmp
       if: ${{ steps.currentVersion.outputs.value }} != ${{ inputs.desiredArtifactIdVersion }}
       id: updateVersion
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'echo $(jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" ./complete/file.json) > new.json'
+        cmd: 'echo $(jq -r ".project.dependencies.dependency[${{ steps.index.outputs.value }}].version |= \"${{ inputs.desiredArtifactIdVersion }}\"" ./complete/tmp.json) > ./completed/tmp.json'
+   
+   # Step 5: Update POM.XML
     - name: Update POM
+      id: updatePOM
+      if: ${{ steps.updateVersion }}
       uses: mikefarah/yq@master
       with:
-        cmd: yq --input-format json --output-format xml new.json > ./complete/pom.xml
+        cmd: yq --input-format json --output-format xml tmp.json > ./complete/pom.xml
+        
     - name: delete unnecesary files
-      run: rm new.json
+      run: rm ./completed/tmp.json
       shell: bash
       
+    #  Step 5.1: Create pull request
     - name: Create Pull Request
+      if: ${{ steps.updatePOM }}
       id: cpr
       uses: peter-evans/create-pull-request@v5
       with:
@@ -64,4 +81,8 @@ jobs:
           - artifactVersion: ${{ inputs.desiredArtifactIdVersion }}
         labels: |
           automated pr
-
+     #  Step 5.2: Notify via <teams,slack>
+    #- name: Notify
+    #  id: notify
+    #  if: ${{ steps.cpr }}
+      
