@@ -108,7 +108,7 @@ jobs:
     steps:
       - env:
           CURRENT_ARTIFACT_VERSION: ${{ needs.build.outputs.currentArtifactVersion }}
-          PULL_REQUEST_URL: ${{ needs.build.outputs.pullRequestUrl }}
+          #PULL_REQUEST_URL: ${{ needs.build.outputs.pullRequestUrl }}
       - uses: actions/checkout@master
       - name: ${{ inputs.artifactId }}  $CURRENT_ARTIFACT_VERSION -> ${{ inputs.desiredArtifactIdVersion }}
         uses: skitionek/notify-microsoft-teams@master
