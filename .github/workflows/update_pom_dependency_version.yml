@@ -17,6 +17,9 @@ env:
   TMP_FILE: "./complete/tmp.json"
 jobs:
   build:
+    outputs:
+      currentArtifactVersion: ${{ steps.currentVersion.outputs.CURRENT_ARTIFACT_VERSION }}
+      pullRequestUrl: ${{ steps.cpr.outputs.pull-request-url }}
 
     runs-on: ubuntu-latest
 
@@ -67,6 +70,10 @@ jobs:
     - name: delete unnecesary files
       run: rm $TMP_FILE
       shell: bash
+    
+    # export currentVersion from this job [build]
+    - name: export currentVersion
+      run: echo "CURRENT_ARTIFACT_VERSION=${{  steps.currentVersion.outputs.value }}" >> "$GITHUB_OUTPUT"
       
     #  Step 5.1: Create pull request
     - name: Create Pull Request
@@ -89,17 +96,46 @@ jobs:
           automated pr
      #  Step 5.2: Notify via <teams,slack>
     - uses: actions/checkout@master
+    
+    - name: export PR url
+      run: echo "PULL_REQUEST_URL=${{ steps.cpr.outputs.pull-request-url }}" >> "$GITHUB_OUTPUT"
+      
   success:
     needs: build
     name: MS Teams Notification
     runs-on: ubuntu-latest
+    
     steps:
+      - env:
+          CURRENT_ARTIFACT_VERSION: ${{ needs.build.outputs.currentArtifactVersion }}
+          PULL_REQUEST_URL: ${{ needs.build.outputs.pullRequestUrl }}
       - uses: actions/checkout@master
-      - name: ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}
+      - name: ${{ inputs.artifactId }}  $CURRENT_ARTIFACT_VERSION -> ${{ inputs.desiredArtifactIdVersion }}
         uses: skitionek/notify-microsoft-teams@master
         # if: always()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          overwrite: |
+            "{
+              title: `${{ inputs.artifactId }}  $CURRENT_ARTIFACT_VERSION -> ${{ inputs.desiredArtifactIdVersion }}`,
+              potentialAction: [
+              {
+                "@type": "OpenUri",
+                name: "PR",
+                targets: [
+                  { os: "default", uri: repository.html_url }
+                ]
+              },
+              {
+                "@type": "OpenUri",
+                name: "Compare",
+                targets: [
+                  { os: "default", uri: compare }
+                ]
+              }
+            ]
+            }"
+          #job: ${{ toJson(job) }}
           #raw: >-
           #  {
           #    "@type": "MessageCard",
