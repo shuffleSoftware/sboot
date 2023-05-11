@@ -20,8 +20,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - env:
-        CURRENT_VERSION: ${{ steps.exportCurrentVersion.outputs.currentVersion }}
     - uses: actions/checkout@v3
     
     # Step 1: Create JSON version of POM.XML to work with jq
@@ -69,12 +67,6 @@ jobs:
       run: rm $TMP_FILE
       shell: bash
       
-    - name: export currentVersion
-      id: exportCurrentVersion
-      run: echo "currentVersion=${{ steps.currentVersion.outputs.value }}" >> "$GITHUB_OUTPUT"
-    
-   
-      
     #  Step 5.1: Create pull request
     - name: Create Pull Request
       if: ${{ steps.updatePOM }}
@@ -96,9 +88,6 @@ jobs:
           automated pr
      #  Step 5.2: Notify via <teams,slack>
     - uses: actions/checkout@master
-    - name: export PullRequestURL
-      id: pullRequestUrl
-      run: echo "pullRequestUrl=${{ steps.cpr.outputs.pull-request-url }}"
   success:
     needs: build
     name: MS Teams Notification
@@ -110,5 +99,9 @@ jobs:
         # if: always()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          job: ${{ toJson(job) }}
- 
+          #raw: >-
+          #  {
+          #    "@type": "MessageCard",
+          #    "@context": "http://schema.org/extensions",
+          #    "title": "No ${variables} avaliable in here"
+          #  }
