@@ -11,6 +11,9 @@ on:
       desiredArtifactIdVersion:
         description: 'version to be updated to'
         default: '1.2.3'
+      notificationDryRun:
+        description: 'Dry run for MS Teams'
+        default: false
 env:
   POM_FILE: "./complete/pom.xml"
   TMP_FILE: "./complete/tmp.json"
@@ -115,9 +118,9 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "correlationId": "04edc93447dd9ec5ecdecfe20cb6414e40584a82",
+              #"correlationId": "04edc93447dd9ec5ecdecfe20cb6414e40584a82",
               "themeColor": "#2cbe4e",
-              "title": "${{ inputs.artifactId }} | ${{ needs.build.outputs.CURRENT_VERSION }} -> ${{ inputs.desiredVersion }}",
+              "title": "${{ inputs.artifactId }} | ${{ needs.build.outputs.CURRENT_VERSION }} -> ${{ inputs.desiredArtifactIdVersion }}",
               "summary": "[shuffleSoftware/sboot](https://github.com/shuffleSoftware/sboot)",
               "sections": [
               #  {
@@ -151,7 +154,7 @@ jobs:
           #needs: ${{ toJson(needs) }}
           #job: ${{ toJson(job) }}
           #steps: ${{ toJson(steps) }}
-          #dry_run: True
+          dry_run: ${{ inputs.notificationDryRun }}
   #success:
   #  needs: build
   #  name: MS Teams Notification
