@@ -1,4 +1,3 @@
-
 name: Update POM dependency version
 
 on: 
@@ -17,13 +16,12 @@ env:
   TMP_FILE: "./complete/tmp.json"
 jobs:
   build:
-    outputs:
-      currentArtifactVersion: ${{ steps.currentVersion.outputs.CURRENT_ARTIFACT_VERSION }}
-      #pullRequestUrl: ${{ steps.cpr.outputs.PULL_REQUEST_URL }}
 
     runs-on: ubuntu-latest
 
     steps:
+    - env:
+        CURRENT_VERSION: ${{ steps.exportCurrentVersion.outputs.currentVersion }}
     - uses: actions/checkout@v3
     
     # Step 1: Create JSON version of POM.XML to work with jq
@@ -70,10 +68,12 @@ jobs:
     - name: delete unnecesary files
       run: rm $TMP_FILE
       shell: bash
-    
-    # export currentVersion from this job [build]
+      
     - name: export currentVersion
-      run: echo "CURRENT_ARTIFACT_VERSION=${{  steps.currentVersion.outputs.value }}" >> "$GITHUB_OUTPUT"
+      id: exportCurrentVersion
+      run: echo "currentVersion=${{ steps.currentVersion.outputs.value }}" >> "$GITHUB_OUTPUT"
+    
+   
       
     #  Step 5.1: Create pull request
     - name: Create Pull Request
@@ -94,36 +94,21 @@ jobs:
           - artifactVersion: ${{ inputs.desiredArtifactIdVersion }}
         labels: |
           automated pr
-     #  Step 5.2: Notify via <teams,slack> 
+     #  Step 5.2: Notify via <teams,slack>
     - uses: actions/checkout@master
-    
-    #- name: export PR url
-    #  run: echo "PULL_REQUEST_URL=${{ steps.cpr.outputs.pull-request-url }}" >> "$GITHUB_OUTPUT"
-      
+    - name: export PullRequestURL
+      id: pullRequestUrl
+      run: echo "pullRequestUrl=${{ steps.cpr.outputs.pull-request-url }}"
   success:
     needs: build
     name: MS Teams Notification
     runs-on: ubuntu-latest
-    
     steps:
-      - env:
-          CURRENT_ARTIFACT_VERSION: ${{ needs.build.outputs.currentArtifactVersion }}
-          #PULL_REQUEST_URL: ${{ needs.build.outputs.pullRequestUrl }}
       - uses: actions/checkout@master
-      - name: ${{ inputs.artifactId }}  $CURRENT_ARTIFACT_VERSION -> ${{ inputs.desiredArtifactIdVersion }}
+      - name: ${{ inputs.artifactId }}  ${{ steps.currentVersion.outputs.value }} -> ${{ inputs.desiredArtifactIdVersion }}
         uses: skitionek/notify-microsoft-teams@master
         # if: always()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          overwrite: "{title: `Overwrote title in ${workflow_link}`,potentialActions: []}"
-            
-          #job: ${{ toJson(job) }}
-          #raw: >-
-          #  {
-          #    "@type": "MessageCard",
-          #    "@context": "http://schema.org/extensions",
-          #    "title": "No ${variables} avaliable in here"
-          #  }
+          job: ${{ toJson(job) }}
  
-          
-      
