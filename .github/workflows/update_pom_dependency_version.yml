@@ -117,24 +117,29 @@ jobs:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
           overwrite: |
             "{
-              title: `${{ inputs.artifactId }}  $CURRENT_ARTIFACT_VERSION -> ${{ inputs.desiredArtifactIdVersion }}`,
-              potentialAction: [
-              {
-                "@type": "OpenUri",
-                name: "PR",
-                targets: [
-                  { os: "default", uri: repository.html_url }
-                ]
-              },
-              {
-                "@type": "OpenUri",
-                name: "Compare",
-                targets: [
-                  { os: "default", uri: compare }
-                ]
-              }
-             ]
+            title: `Overwrote title in ${workflow_link}`,
+            potentialActions: []
             }"
+            
+            #"{
+            #  title: `${{ inputs.artifactId }}  $CURRENT_ARTIFACT_VERSION -> ${{ inputs.desiredArtifactIdVersion }}`,
+            #  potentialAction: [
+            #  {
+            ##    "@type": "OpenUri",
+             #   name: "PR",
+             #   targets: [
+             #     { os: "default", uri: repository.html_url }
+             #   ]
+             # },
+             # {
+             #   "@type": "OpenUri",
+             #   name: "Compare",
+             #   targets: [
+             #     { os: "default", uri: compare }
+             #   ]
+             # }
+             #]
+            #}"
           #job: ${{ toJson(job) }}
           #raw: >-
           #  {
